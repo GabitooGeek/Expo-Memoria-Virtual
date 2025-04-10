@@ -1,0 +1,422 @@
+/* --- Variables Globales --- */
+:root {
+    --bg-slide-light: #f0f4f8;
+    --bg-slide-dark: #0d1117; /* Fondo oscuro principal */
+    --text-light: #e6f1ff;    /* Texto sobre fondo oscuro */
+    --text-dark: #1c1e21;     /* Texto sobre fondo claro */
+    --accent-primary: #00aaff; /* Azul claro */
+    --accent-secondary: #00f5c3; /* Verde menta */
+    --bg-nav: rgba(15, 22, 36, 0.7);
+    --border-nav: rgba(255, 255, 255, 0.15);
+    --shadow-nav: rgba(0, 0, 0, 0.3);
+    --font-primary: 'Poppins', sans-serif;
+    --transition-slide: transform 0.6s cubic-bezier(0.65, 0.05, 0.36, 1);
+    --transition-fast: all 0.3s ease;
+    --blur-intensity: 5px;
+}
+
+/* --- Reset Básico y Estilos Base --- */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-slide-dark);
+    color: var(--text-light);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    line-height: 1.6;
+}
+
+/* --- Contenedor Principal del Slider --- */
+.presentation-slider {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- Contenedor de Slides --- */
+.slides-container {
+    display: flex;
+    /* Ancho basado en el número TOTAL de slides (25) */
+    width: 2500%; /* 100% * 25 slides */
+    height: 100%;
+    transition: var(--transition-slide);
+    will-change: transform;
+}
+
+/* --- Estilo de Cada Slide --- */
+.slide {
+    /* Ancho basado en el número TOTAL de slides (25) */
+    width: calc(100% / 25); /* 100% / 25 slides */
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 60px;
+    position: relative;
+    overflow-y: auto;
+    background-color: var(--bg-slide-dark);
+    color: var(--text-light);
+    text-align: left;
+}
+
+/* Estilos específicos para algunos slides */
+.slide-title {
+    background: linear-gradient(135deg, #0d1117, #161b22);
+    text-align: center;
+}
+.slide-agenda {
+    background: linear-gradient(135deg, #10141b, #1c2128);
+}
+.slide-final {
+     background: linear-gradient(135deg, #161b22, #0d1117);
+     text-align: center;
+}
+
+
+/* Contenido dentro del slide */
+.slide-content {
+    max-width: 900px;
+    width: 100%;
+}
+
+/* --- Tipografía y Elementos Comunes --- */
+h1 {
+    font-size: clamp(2.5rem, 5vw, 3.8rem);
+    color: var(--accent-secondary);
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 30px;
+    color: var(--accent-primary);
+    font-weight: 500;
+    border-bottom: 2px solid var(--accent-primary);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+/* Corrección centrado */
+.slide-title h1, .slide-title h2, .slide-title p,
+.slide-final h2, .slide-final p {
+    text-align: center;
+}
+.slide-title h2 {
+    border-bottom: none;
+    display: block;
+}
+
+h3 {
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    color: var(--accent-secondary);
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+p, li {
+    font-size: clamp(0.95rem, 2vw, 1.1rem);
+    margin-bottom: 12px;
+    color: var(--text-light);
+    max-width: 800px;
+}
+
+p.subtitle, p.presenter {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--text-light);
+    margin-bottom: 20px;
+    opacity: 0.9;
+     text-align: center;
+}
+p.presenter {
+    margin-top: 40px;
+    font-style: italic;
+}
+
+ul, ol {
+    margin-left: 25px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+ul { list-style-type: disc; }
+ol { list-style-type: decimal; }
+
+li { margin-bottom: 10px; }
+li ul { margin-top: 8px; margin-bottom: 8px; }
+li ul li { font-size: 0.95em; }
+
+strong { color: var(--accent-secondary); font-weight: 600; }
+code {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.95em;
+    color: var(--accent-primary);
+}
+
+/* --- Navegación Fija del Slider --- */
+.slider-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 15px;
+    background: var(--bg-nav);
+    border: 1px solid var(--border-nav);
+    border-radius: 50px;
+    backdrop-filter: blur(var(--blur-intensity));
+    -webkit-backdrop-filter: blur(var(--blur-intensity));
+    box-shadow: 0 4px 15px var(--shadow-nav);
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.nav-btn {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-fast);
+    will-change: background-color, transform;
+}
+.nav-btn:hover:not(:disabled) {
+    background-color: var(--accent-primary);
+    color: var(--bg-slide-dark);
+    transform: scale(1.1);
+}
+.nav-btn:disabled,
+.nav-btn.hidden {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: scale(0.9);
+    pointer-events: none;
+}
+
+.dots-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dot {
+    width: 10px; height: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    padding: 0;
+}
+.dot:hover { background-color: rgba(0, 170, 255, 0.7); }
+.dot.active {
+    background-color: var(--accent-secondary);
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(0, 245, 195, 0.5);
+}
+
+.navigation-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* --- Estilos Adicionales para Didáctica --- */
+
+/* Botón para lanzar video */
+.video-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 25px;
+    padding: 10px 20px;
+    background-color: var(--accent-primary);
+    color: var(--bg-slide-dark);
+    border: none;
+    border-radius: 5px;
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 2px 5px rgba(0, 170, 255, 0.3);
+}
+.video-trigger:hover {
+    background-color: var(--accent-secondary);
+    color: var(--bg-slide-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 245, 195, 0.4);
+}
+.video-trigger i {
+    font-size: 1.2em;
+}
+
+/* Estilos para el Modal de Video */
+.video-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+}
+.video-modal.show {
+    display: flex;
+}
+
+.video-modal-content {
+    position: relative;
+    background-color: #000; /* Fondo negro para el contenedor del video */
+    margin: 20px;
+    padding: 0; /* Sin padding para que el video ocupe todo */
+    border: 1px solid var(--border-nav);
+    width: 90%;
+    max-width: 880px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    aspect-ratio: 16 / 9; /* Proporción común, ajusta si tus videos son diferentes */
+    overflow: hidden; /* Ocultar desbordamientos */
+}
+
+/* Estilo para la etiqueta <video> */
+#localVideoPlayer {
+    display: block; /* Evitar espacio inferior */
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Muestra todo el video, puede añadir barras negras */
+    background-color: #000; /* Fondo por si object-fit crea barras */
+}
+
+.close-video-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    color: var(--bg-slide-dark);
+    background-color: var(--accent-secondary);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 35px;
+    text-align: center;
+    border: 2px solid var(--bg-slide-dark);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    z-index: 1010;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+.close-video-btn:hover,
+.close-video-btn:focus {
+    background-color: var(--accent-primary);
+    color: var(--text-light);
+    transform: scale(1.1) rotate(90deg);
+    outline: none;
+}
+
+/* Slide de preguntas */
+.slide[data-slide-index="22"] ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+}
+.slide[data-slide-index="22"] li {
+    margin-bottom: 18px;
+    padding-left: 5px;
+}
+.hint {
+    margin-top: 30px;
+    font-style: italic;
+    font-size: 0.9em;
+    opacity: 0.75;
+    text-align: center;
+    color: var(--accent-primary);
+}
+
+/* --- Estilos para Arte ASCII --- */
+.ascii-art {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    margin-top: 25px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85em;
+    line-height: 1.3;
+    color: var(--text-light);
+    overflow-x: auto;
+    white-space: pre;
+}
+
+/* --- Media Queries --- */
+@media (max-width: 768px) {
+    html { font-size: 15px; }
+    .slide { padding: 30px 30px; }
+    .slide-content { max-width: 95%; }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.6rem; margin-bottom: 20px; }
+    p, li { font-size: 0.95rem; }
+    ul, ol { margin-left: 15px; padding-left: 15px; }
+
+    .slider-navigation { bottom: 15px; padding: 6px 10px; gap: 10px;}
+    .nav-btn { width: 40px; height: 40px; font-size: 1rem; }
+    .dots-container { gap: 8px; }
+    .dot { width: 8px; height: 8px; }
+
+    /* Modal responsivo */
+    .video-modal-content {
+        width: 95%;
+        margin: 10px;
+    }
+    .close-video-btn {
+        top: -10px;
+        right: -10px;
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+        line-height: 30px;
+    }
+
+    /* ASCII responsivo */
+    .ascii-art {
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    html { font-size: 14px; }
+    .slide { padding: 25px 15px; }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.4rem; }
+    p, li { font-size: 0.9rem; }
+
+    /* Preguntas responsivo */
+    .slide[data-slide-index="22"] li {
+         margin-bottom: 15px;
+    }
+
+     /* ASCII responsivo */
+    .ascii-art {
+        font-size: 0.75em;
+        padding: 10px;
+    }
+}
